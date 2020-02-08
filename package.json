@@ -1,0 +1,26 @@
+{
+  "name": "2captcha-wrapper",
+  "version": "1.1.0",
+  "description": "A module to solve google's recaptcha v2 using the 2captcha service.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IcaroAugusto/2captcha-wrapper.git"
+  },
+  "keywords": [
+    "bypass",
+    "recaptcha",
+    "captcha",
+    "google",
+    "2captcha"
+  ],
+  "author": "IcaroAugusto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IcaroAugusto/2captcha-wrapper/issues"
+  },
+  "homepage": "https://github.com/IcaroAugusto/2captcha-wrapper#readme"
+}

@@ -1,7 +1,8 @@
 const Request = require('request-instance');
 
-const GET_ID_URL = 'http://2captcha.com/in.php'
-const GET_TOKEN_URL = 'http://2captcha.com/res.php'
+const GET_ID_URL = 'http://2captcha.com/in.php';
+const GET_TOKEN_URL = 'http://2captcha.com/res.php';
+const REPORT_URL = 'http://2captcha.com/res.php';
 
 function sleep(ms = 50) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -45,13 +46,7 @@ TwoCaptcha.prototype.getId = async function(captcha) {
   return splitData[0] == 'OK' ? splitData[1] : null;
 }
 
-TwoCaptcha.prototype.getToken = async function(captcha) {
-  var id = await this.getId(captcha);
-  if (id == null) {
-    return null;
-  }
-  console.log('Got captcha id: ' + id);
-  console.log('Request url: ' + GET_TOKEN_URL + '?key=' + this.apiKey + '&action=get&id=' + id);
+TwoCaptcha.prototype.getToken = async function(id) {
   var count = 0;
   while (true) {
     await sleep(5000);
@@ -60,11 +55,43 @@ TwoCaptcha.prototype.getToken = async function(captcha) {
       return null;
     }
     var output = await this.request.get(GET_TOKEN_URL + '?key=' + this.apiKey + '&action=get&id=' + id);
-    if (!output.error) console.log(output.body);
     if (!output.error && output.body.length > 20) {
       var splitData = output.body.split('|');
       return splitData[0] == 'OK' ? splitData[1] : null;
     }
+  }
+}
+
+async function report(id, action) {
+  var form = {
+    key: this.apiKey,
+    action: action,
+    id: id
+  }
+  await this.request.post(REPORT_URL, form);
+}
+
+TwoCaptcha.prototype.reportBad = async function(id) {
+  await report(id, 'reportbad');
+}
+
+TwoCaptcha.prototype.reportGood = async function(id) {
+  await report(id, 'reportgood');
+}
+
+TwoCaptcha.prototype.solve = async function(captcha) {
+  var id = await this.getId(captcha);
+  if (id == null) {
+    return null;
+  }
+  var token = await this.getToken(id);
+  if (!token) {
+    this.reportBad(id);
+    return null;
+  }
+  return {
+    id: id,
+    token: token
   }
 }
 

@@ -13,8 +13,14 @@ You will need a 2captcha api key, which you can get [here](https://2captcha.com?
 The module exports the TwoCaptcha prototype. It accepts two parameters on construction: apiKey and timeout, 
 the timeout parameter can be ommited, defaulting to 180000 milliseconds;
 
-The object contains the getToken method that should be used to get the captcha token for google recaptcha;
+The object contains the solve method that should be used to get the captcha id/token for google recaptcha.
+
+The solve method, when successful, returns an object containing the request id and token. On failure it returns null and reports the
+bad captcha.
+
 After getting the token, you can send it with your http request or set it in the page if you're running puppeteer/selenium.
+
+The id can be used to report good/bad captcha using the reportGood/reportBad methods.
 
 To get the siteKey: Open the webpage, view source, ctrl+f "data-sitekey".
 
@@ -32,7 +38,7 @@ To get the siteKey: Open the webpage, view source, ctrl+f "data-sitekey".
 
   async function main() {
     var tcaptcha = new TwoCaptcha(apiKey, captchaTimeout);
-    var captchaToken = await tcaptcha.getToken(siteCaptcha);
+    var captchaToken = await tcaptcha.solve(siteCaptcha);
     console.log('Got token!');
     console.log(captchaToken);
   }
